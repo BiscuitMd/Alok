@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val client = OkHttpClient()
     private val handler = Handler(Looper.getMainLooper())
     
-    // 🔥 FIX 1: Ubah tipe data jadi ScrollView
+    // 🔥 SINKRON DENGAN XML: layoutDashboard bertipe ScrollView
     private lateinit var layoutLogin: LinearLayout
     private lateinit var layoutDashboard: ScrollView 
     
@@ -32,10 +32,12 @@ class MainActivity : AppCompatActivity() {
         try {
             setContentView(R.layout.activity_main)
 
+            // Minta izin Telepon (Wajib buat Caller)
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), 1)
             }
 
+            // Inisialisasi Layout
             layoutLogin = findViewById(R.id.layoutLogin)
             layoutDashboard = findViewById(R.id.layoutDashboard)
 
@@ -43,45 +45,48 @@ class MainActivity : AppCompatActivity() {
             val editKey = findViewById<EditText>(R.id.editKey)
             val btnLogin = findViewById<Button>(R.id.btnLogin)
 
+            // Logika Tombol Masuk
             btnLogin.setOnClickListener {
                 baseUrl = editUrl.text.toString().trim()
                 apiKey = editKey.text.toString().trim()
                 
                 if (baseUrl.isNotEmpty() && apiKey.isNotEmpty()) {
+                    // Sembunyikan Login, Tampilkan Dashboard
                     layoutLogin.visibility = View.GONE
+                    layoutDashboard.visibility = View.VISIBLE
                     
-                    // 🔥 FIX 2: Ubah LinearLayout.VISIBLE jadi View.VISIBLE
-                    layoutDashboard.visibility = View.VISIBLE 
-                    
+                    // Jalankan Service Background (Mesin Caller)
                     val intent = Intent(this, CallerService::class.java)
                     intent.putExtra("BASE_URL", baseUrl)
                     intent.putExtra("API_KEY", apiKey)
                     ContextCompat.startForegroundService(this, intent)
                     
+                    // Mulai Tarik Data dari Bot (Tiap 3 Detik)
                     startDashboardUpdate()
                 } else {
-                    Toast.makeText(this, "Isi semua kolom!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "URL dan API Key tidak boleh kosong!", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: Exception) {
-            val tvError = TextView(this)
-            tvError.text = "APLIKASI CRASH:\n\n${e.message}\n\n${e.stackTraceToString()}"
-            tvError.setTextColor(android.graphics.Color.RED)
-            tvError.textSize = 14f
-            tvError.setPadding(30, 100, 30, 30)
-            setContentView(tvError)
+            showError(e)
         }
     }
 
+    // ─── LOOPING UPDATE DASHBOARD ───
     private fun startDashboardUpdate() {
         handler.postDelayed(object : Runnable {
             override fun run() {
-                fetchStats()
-                handler.postDelayed(this, 3000)
+                try {
+                    fetchStats()
+                } catch (e: Exception) {
+                    // Abaikan error sesaat biar gak crash
+                }
+                handler.postDelayed(this, 3000) // 3000ms = 3 detik
             }
         }, 1000)
     }
 
+    // ─── TARIK DATA DARI BOT PTERODACTYL ───
     private fun fetchStats() {
         val request = Request.Builder()
             .url("$baseUrl/bot-stats")
@@ -91,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    try { findViewById<TextView>(R.id.tvCallStatus).text = "Gagal konek ke server" } catch (_: Exception) {}
+                    try { findViewById<TextView>(R.id.tvCallStatus).text = "⚠️ Gagal konek ke server" } catch (_: Exception) {}
                 }
             }
 
@@ -99,6 +104,8 @@ class MainActivity : AppCompatActivity() {
                 response.body?.string()?.let { body ->
                     try {
                         val json = JSONObject(body)
+                        
+                        // Ambil data dari JSON Bot
                         val totalUsers = json.optInt("totalUsers", 0)
                         val totalPrem = json.optInt("totalPrem", 0)
                         val progress = json.getJSONObject("progress")
@@ -108,6 +115,7 @@ class MainActivity : AppCompatActivity() {
                         val target = progress.optString("target", "-")
                         val status = progress.optString("status", "Idle")
 
+                        // Update UI di Main Thread
                         runOnUiThread {
                             try {
                                 findViewById<TextView>(R.id.tvUsers).text = "Users: $totalUsers"
@@ -125,5 +133,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    // ─── FUNGSI ANTI-CRASH (Nampilin Error di Layar) ───
+    private fun showError(e: Exception) {
+        val tvError = TextView(this)
+        tvError.text = "CRASH DI APLIKASI:\n\n${e.message}\n\n${e.stackTraceToString()}"
+        tvError.setTextColor(android.graphics.Color.RED)
+        tvError.textSize = 12f
+        tvError.setPadding(30, 100, 30, 30)
+        tvError.setBackgroundColor(android.graphics.Color.BLACK)
+        setContentView(tvError)
     }
 }
