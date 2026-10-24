@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212">
+    android:background="#111111">
 
     <!-- ========================================== -->
     <!-- LAYAR LOGIN (Tampil di awal)               -->
@@ -15,50 +15,60 @@
         android:orientation="vertical"
         android:padding="24dp"
         android:gravity="center"
+        android:background="#1A1A1A"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- Teks Login 3D Emas -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SUXANOX CALLER"
-            android:textSize="28sp"
+            android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="#00E5FF"
-            android:shadowColor="#000"
-            android:shadowDx="2"
-            android:shadowDy="2"
-            android:shadowRadius="4"
-            android:layout_marginBottom="30dp"/>
+            android:textColor="#FFD700"
+            android:shadowColor="#B8860B"
+            android:shadowDx="4"
+            android:shadowDy="4"
+            android:shadowRadius="0"
+            android:layout_marginBottom="40dp"/>
 
+        <!-- Kolom Input ala Lego -->
         <EditText
             android:id="@+id/editUrl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="55dp"
             android:hint="URL Domain (http://ip:8081)"
-            android:textColor="#FFF"
-            android:textColorHint="#888"
-            android:backgroundTint="#00E5FF"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="#2C2C2C"
+            android:padding="15dp"
             android:layout_marginBottom="15dp"/>
 
         <EditText
             android:id="@+id/editKey"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="API Key (rahasia123)"
-            android:textColor="#FFF"
-            android:textColorHint="#888"
-            android:backgroundTint="#00E5FF"
-            android:layout_marginBottom="25dp"/>
+            android:layout_height="55dp"
+            android:hint="API Key"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="#2C2C2C"
+            android:padding="15dp"
+            android:layout_marginBottom="30dp"/>
 
+        <!-- Tombol 3D -->
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="MASUK DASHBOARD"
-            android:backgroundTint="#00E5FF"
-            android:textColor="#000"
-            android:textStyle="bold"/>
+            android:layout_height="60dp"
+            android:text="MASUK"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:backgroundTint="#FFD700"
+            android:stateListAnimator="@null"
+            android:elevation="8dp"
+            android:layout_marginBottom="20dp"/>
     </LinearLayout>
 
     <!-- ========================================== -->
@@ -69,6 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
+        android:background="#222222"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -78,45 +89,48 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Banner Anime 3D -->
-            <!-- PASTIKAN LU NARUH GAMBAR banner_anime.jpg DI FOLDER res/drawable -->
+            <!-- Banner (Ganti src dengan gambar Lego 3D lu) -->
+            <!-- HAPUS android:src="@drawable/banner_anime" KALAU GAMBARNYA BELUM ADA -->
             <ImageView
                 android:id="@+id/imgBanner"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="200dp"
                 android:scaleType="centerCrop"
-                android:background="#333"
-                android:src="@drawable/banner_anime"/> 
-                <!-- KALAU GAMBAR BELUM ADA, HAPUS BARIS android:src DI ATAS -->
+                android:background="#333333"
+                android:src="@drawable/banner_lego"/> <!-- GANTI NAMA GAMBAR JADI banner_lego -->
 
-            <!-- Header Text 3D -->
+            <!-- WELCOME OWNER (Teks Putih Kertas 3D) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="WELCOME OWNER"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 android:textStyle="bold|italic"
-                android:textColor="#FFD700"
-                android:shadowColor="#FF0000"
-                android:shadowDx="2"
-                android:shadowDy="2"
-                android:shadowRadius="5"
+                android:textColor="#FFFFFF"
+                android:shadowColor="#000000"
+                android:shadowDx="3"
+                android:shadowDy="3"
+                android:shadowRadius="1"
                 android:gravity="center"
                 android:layout_marginTop="15dp"/>
 
-            <!-- Judul Dashboard -->
+            <!-- MONITORING BOT (Teks Emas 3D) -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="MONITORING BOT"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#00E5FF"
+                android:textColor="#FFD700"
+                android:shadowColor="#B8860B"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="0"
                 android:gravity="center"
-                android:letterSpacing="0.2"
+                android:letterSpacing="0.15"
                 android:layout_marginBottom="20dp"/>
 
-            <!-- Statistik User -->
+            <!-- Kotak Statistik ala Lego (Brick) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -124,39 +138,43 @@
                 android:weightSum="2"
                 android:layout_marginBottom="20dp">
 
-                <androidx.cardview.widget.CardView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
-                    app:cardBackgroundColor="#1E1E1E"
-                    app:cardCornerRadius="10dp">
+                    android:background="#333333"
+                    android:elevation="6dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
                     <TextView
                         android:id="@+id/tvUsers"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Users: 0"
-                        android:textColor="#FFF"
-                        android:gravity="center"
-                        android:padding="16dp"/>
-                </androidx.cardview.widget.CardView>
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+                </LinearLayout>
 
-                <androidx.cardview.widget.CardView
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
-                    app:cardBackgroundColor="#1E1E1E"
-                    app:cardCornerRadius="10dp">
+                    android:background="#333333"
+                    android:elevation="6dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
                     <TextView
                         android:id="@+id/tvPremium"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Premium: 0"
                         android:textColor="#00FF00"
-                        android:gravity="center"
-                        android:padding="16dp"/>
-                </androidx.cardview.widget.CardView>
+                        android:textStyle="bold"
+                        android:gravity="center"/>
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Live Progress Call -->
@@ -164,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="LIVE STATUS CALLER:"
-                android:textColor="#FFF"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
@@ -172,18 +190,18 @@
                 android:id="@+id/progressCall"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
+                android:layout_height="25dp"
                 android:max="100"
                 android:progress="0"
-                android:progressTint="#FF0000"/>
+                android:progressTint="#FFD700"/> <!-- Warna Emas -->
 
             <TextView
                 android:id="@+id/tvCallStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Idle (0/0)"
-                android:textColor="#AAA"
-                android:layout_marginTop="4dp"
+                android:textColor="#AAAAAA"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="20dp"/>
 
             <!-- List User -->
@@ -191,7 +209,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DAFTAR USER BOT:"
-                android:textColor="#FFF"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
@@ -200,7 +218,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Memuat data user..."
-                android:textColor="#AAA"
+                android:textColor="#AAAAAA"
+                android:background="#111111"
+                android:padding="16dp"
                 android:fontFamily="monospace"/>
 
         </LinearLayout>
