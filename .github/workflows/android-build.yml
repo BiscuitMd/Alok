@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK (Auto-Repair)
 
 on:
   push:
@@ -18,16 +18,63 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+    # ─── AUTO-REPAIR GRADLEWRAPPER ───
+    - name: Auto-Repair Gradle Wrapper
+      run: |
+        echo "🔍 Cek keberadaan file gradlew dan wrapper..."
+        if [ ! -f "gradlew" ] || [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "⚠️ File gradlew atau wrapper hilang! Meng-generate ulang..."
+          # Hapus sisa folder gradle yang rusak (jika ada)
+          rm -rf gradle/
+          
+          # Download Gradle versi 8.2 secara manual
+          wget -q https://services.gradle.org/distributions/gradle-8.2-bin.zip
+          unzip -q gradle-8.2-bin.zip
+          
+          # Bikin folder wrapper dan copy file-nya
+          mkdir -p gradle/wrapper
+          cp gradle-8.2/lib/plugins/gradle-wrapper-main-8.2.jar gradle/wrapper/gradle-wrapper.jar || true
+          
+          # Generate ulang gradlew (script bash)
+          echo '#!/bin/sh' > gradlew
+          echo 'exec java -classpath gradle/wrapper/gradle-wrapper.jar org.gradle.wrapper.GradleWrapperMain "$@"' >> gradlew
+          chmod +x gradlew
+          
+          echo "✅ Gradle Wrapper berhasil di-generate ulang!"
+        else
+          echo "✅ Gradle Wrapper aman, lanjut build."
+        fi
+        chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug
+    # ─── BUILD DENGAN RETRY (KALAU GAGAL, COBA LAGI) ───
+    - name: Build APK (With Auto-Retry)
+      run: |
+        echo "🚀 Mulai build APK..."
+        
+        # Percobaan Pertama
+        ./gradlew assembleDebug || {
+          echo "❌ Build Gagal! Mencoba perbaikan otomatis (bersihkan cache)..."
+          ./gradlew clean
+          
+          echo "🔄 Mencoba build ulang (Percobaan ke-2)..."
+          ./gradlew assembleDebug --no-daemon || {
+            echo "❌ Build Gagal lagi. Menghentikan proses."
+            exit 1
+          }
+        }
 
     - name: Upload APK
+      if: success() # Cuma upload kalau build beneran sukses
       uses: actions/upload-artifact@v4
       with:
         name: SuxanoxCaller-APK
         path: app/build/outputs/apk/debug/app-debug.apk
+
+    # ─── JIKA GAGAL TOTAL, TAMPILKAN LOG BIAR LU TAU KENAPA ───
+    - name: Show Error Log (If Failed)
+      if: failure()
+      run: |
+        echo "🚨 BUILD GAGAL. Berikut adalah isi folder saat ini:"
+        ls -la
+        echo "Coba cek error di atas."
