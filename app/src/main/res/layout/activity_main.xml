@@ -5,14 +5,18 @@
     android:layout_height="match_parent"
     android:background="#121212">
 
-    <!-- LAYAR LOGIN (Tampil di awal) -->
+    <!-- ========================================== -->
+    <!-- LAYAR LOGIN (Tampil di awal)               -->
+    <!-- ========================================== -->
     <LinearLayout
         android:id="@+id/layoutLogin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="24dp"
-        android:gravity="center">
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
@@ -21,6 +25,10 @@
             android:textSize="28sp"
             android:textStyle="bold"
             android:textColor="#00E5FF"
+            android:shadowColor="#000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"
             android:layout_marginBottom="30dp"/>
 
         <EditText
@@ -31,17 +39,17 @@
             android:textColor="#FFF"
             android:textColorHint="#888"
             android:backgroundTint="#00E5FF"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="15dp"/>
 
         <EditText
             android:id="@+id/editKey"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="API Key"
+            android:hint="API Key (rahasia123)"
             android:textColor="#FFF"
             android:textColorHint="#888"
             android:backgroundTint="#00E5FF"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="25dp"/>
 
         <Button
             android:id="@+id/btnLogin"
@@ -53,12 +61,16 @@
             android:textStyle="bold"/>
     </LinearLayout>
 
-    <!-- LAYAR DASHBOARD (Sembunyi di awal) -->
+    <!-- ========================================== -->
+    <!-- LAYAR DASHBOARD (Sembunyi di awal)         -->
+    <!-- ========================================== -->
     <ScrollView
         android:id="@+id/layoutDashboard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,14 +78,16 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Banner Anime 3D (Ganti link image lu) -->
+            <!-- Banner Anime 3D -->
+            <!-- PASTIKAN LU NARUH GAMBAR banner_anime.jpg DI FOLDER res/drawable -->
             <ImageView
                 android:id="@+id/imgBanner"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/banner_anime" 
-                android:background="#333"/>
+                android:background="#333"
+                android:src="@drawable/banner_anime"/> 
+                <!-- KALAU GAMBAR BELUM ADA, HAPUS BARIS android:src DI ATAS -->
 
             <!-- Header Text 3D -->
             <TextView
@@ -88,7 +102,7 @@
                 android:shadowDy="2"
                 android:shadowRadius="5"
                 android:gravity="center"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="15dp"/>
 
             <!-- Judul Dashboard -->
             <TextView
@@ -108,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="2"
-                android:layout_marginBottom="16dp">
+                android:layout_marginBottom="20dp">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
