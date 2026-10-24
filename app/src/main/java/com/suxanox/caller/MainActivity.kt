@@ -6,13 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -23,8 +18,10 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
     private val client = OkHttpClient()
     private val handler = Handler(Looper.getMainLooper())
+    
+    // 🔥 FIX 1: Ubah tipe data jadi ScrollView
     private lateinit var layoutLogin: LinearLayout
-    private lateinit var layoutDashboard: LinearLayout
+    private lateinit var layoutDashboard: ScrollView 
     
     private var baseUrl = ""
     private var apiKey = ""
@@ -32,11 +29,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 🔥 BUNGKUS DENGAN TRY-CATCH BIAR GAK KEPENTAL
         try {
             setContentView(R.layout.activity_main)
 
-            // Minta izin CALL_PHONE & NOTIFIKASI
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CALL_PHONE), 1)
             }
@@ -53,8 +48,10 @@ class MainActivity : AppCompatActivity() {
                 apiKey = editKey.text.toString().trim()
                 
                 if (baseUrl.isNotEmpty() && apiKey.isNotEmpty()) {
-                    layoutLogin.visibility = LinearLayout.GONE
-                    layoutDashboard.visibility = LinearLayout.VISIBLE
+                    layoutLogin.visibility = View.GONE
+                    
+                    // 🔥 FIX 2: Ubah LinearLayout.VISIBLE jadi View.VISIBLE
+                    layoutDashboard.visibility = View.VISIBLE 
                     
                     val intent = Intent(this, CallerService::class.java)
                     intent.putExtra("BASE_URL", baseUrl)
@@ -67,7 +64,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         } catch (e: Exception) {
-            // 🔥 KALAU CRASH, TAMPILIN ERRORNYA DI LAYAR
             val tvError = TextView(this)
             tvError.text = "APLIKASI CRASH:\n\n${e.message}\n\n${e.stackTraceToString()}"
             tvError.setTextColor(android.graphics.Color.RED)
